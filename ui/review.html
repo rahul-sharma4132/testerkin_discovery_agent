@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TesterKin Flow Review</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #f5f5f5;
+      color: #333;
+    }
+    .container {
+      display: flex;
+      height: 100vh;
+      flex-direction: column;
+    }
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .header h1 { font-size: 24px; margin-bottom: 10px; }
+    .stats {
+      display: flex;
+      gap: 30px;
+      font-size: 14px;
+    }
+    .stat { display: flex; gap: 8px; align-items: center; }
+    .stat-value { font-weight: bold; font-size: 18px; }
+    .main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+    .sidebar {
+      width: 350px;
+      border-right: 1px solid #ddd;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .filter-tabs {
+      display: flex;
+      border-bottom: 1px solid #ddd;
+      background: #fafafa;
+    }
+    .filter-tabs button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      border-bottom: 2px solid transparent;
+      color: #666;
+      transition: all 0.2s;
+    }
+    .filter-tabs button.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
+    }
+    .flow-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+    }
+    .flow-item {
+      padding: 12px;
+      margin-bottom: 8px;
+      background: white;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .flow-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .flow-item.active {
+      background: #f0f4ff;
+      border-color: #667eea;
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+    }
+    .flow-item-name { font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+    .flow-item-status {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .status-pending { background: #fff3cd; color: #856404; }
+    .status-approved { background: #d4edda; color: #155724; }
+    .status-rejected { background: #f8d7da; color: #721c24; }
+    .detail-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: white;
+      overflow-y: auto;
+    }
+    .detail-empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #999;
+      font-size: 16px;
+    }
+    .detail-content {
+      padding: 30px;
+    }
+    .detail-header { margin-bottom: 20px; }
+    .detail-name { font-size: 28px; font-weight: bold; margin-bottom: 8px; }
+    .detail-badges {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .badge-category { background: #e3f2fd; color: #1565c0; }
+    .badge-actor { background: #f3e5f5; color: #6a1b9a; }
+    .badge-confidence-high { background: #c8e6c9; color: #2e7d32; }
+    .badge-confidence-mid { background: #ffe0b2; color: #e65100; }
+    .badge-confidence-low { background: #ffcdd2; color: #c62828; }
+    .badge-delta-new { background: #c8e6c9; color: #2e7d32; }
+    .badge-delta-modified { background: #ffe0b2; color: #e65100; }
+    .badge-delta-duplicate { background: #ffcdd2; color: #c62828; }
+    .detail-description { font-size: 15px; line-height: 1.6; margin-bottom: 20px; color: #555; }
+    .detail-section { margin-bottom: 25px; }
+    .detail-section-title { font-size: 14px; font-weight: 700; color: #333; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .steps-list { list-style: none; }
+    .step {
+      padding: 12px;
+      margin-bottom: 8px;
+      background: #f9f9f9;
+      border-left: 3px solid #667eea;
+      border-radius: 3px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .step-number { font-weight: bold; color: #667eea; }
+    .detail-endpoints { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 13px; }
+    .endpoint {
+      padding: 12px;
+      background: #fafafa;
+      border-radius: 6px;
+      border: 1px solid #e0e0e0;
+    }
+    .endpoint-label { font-weight: 600; color: #666; margin-bottom: 4px; font-size: 11px; }
+    .endpoint-value { word-break: break-all; color: #333; }
+    .detail-actions {
+      display: flex;
+      gap: 10px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
+    }
+    .btn {
+      flex: 1;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-approve { background: #4caf50; color: white; }
+    .btn-approve:hover { background: #45a049; }
+    .btn-reject { background: #f44336; color: white; }
+    .btn-reject:hover { background: #da190b; }
+    .btn-pending { background: #ffc107; color: #333; }
+    .btn-pending:hover { background: #ffb300; }
+    .file-input-wrapper {
+      padding: 20px;
+      background: white;
+      border-top: 1px solid #ddd;
+    }
+    .file-input-wrapper input { width: 100%; }
+    .export-button {
+      padding: 20px;
+      background: white;
+      border-top: 1px solid #ddd;
+      text-align: center;
+    }
+    .btn-export {
+      background: #667eea;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .btn-export:hover { background: #5568d3; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>TesterKin Flow Review</h1>
+      <div class="stats">
+        <div class="stat">
+          <span>Total:</span>
+          <span class="stat-value" id="stat-total">0</span>
+        </div>
+        <div class="stat">
+          <span>Approved:</span>
+          <span class="stat-value" id="stat-approved">0</span>
+        </div>
+        <div class="stat">
+          <span>Rejected:</span>
+          <span class="stat-value" id="stat-rejected">0</span>
+        </div>
+        <div class="stat">
+          <span>Pending:</span>
+          <span class="stat-value" id="stat-pending">0</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="sidebar">
+        <div class="filter-tabs">
+          <button class="active" data-filter="all">All</button>
+          <button data-filter="pending">Pending</button>
+          <button data-filter="approved">Approved</button>
+          <button data-filter="rejected">Rejected</button>
+        </div>
+        <div class="flow-list" id="flow-list"></div>
+        <div class="file-input-wrapper">
+          <input type="file" id="file-input" accept=".json" placeholder="Load flows.json">
+        </div>
+      </div>
+
+      <div class="detail-panel">
+        <div class="detail-empty">Select a flow to view details</div>
+      </div>
+    </div>
+
+    <div class="export-button">
+      <button class="btn-export" id="export-btn">Export Approved Flows</button>
+    </div>
+  </div>
+
+  <script>
+    let flows = [];
+    let currentFilter = 'all';
+    let selectedFlowIndex = null;
+
+    const fileInput = document.getElementById('file-input');
+    const flowList = document.getElementById('flow-list');
+    const detailPanel = document.querySelector('.detail-panel');
+    const filterButtons = document.querySelectorAll('.filter-tabs button');
+    const exportBtn = document.getElementById('export-btn');
+
+    fileInput.addEventListener('change', handleFileUpload);
+    filterButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        filterButtons.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        renderFlowList();
+      });
+    });
+    exportBtn.addEventListener('click', exportApprovedFlows);
+
+    function handleFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const data = JSON.parse(event.target.result);
+          flows = data.map((f, i) => ({
+            ...f,
+            status: 'pending',
+            deltaClassification: i === 0 ? 'new' : 'pending',
+          }));
+          renderFlowList();
+          updateStats();
+        } catch (err) {
+          alert('Invalid JSON file');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function renderFlowList() {
+      flowList.innerHTML = '';
+      const filtered = flows.filter((f) => currentFilter === 'all' || f.status === currentFilter);
+      filtered.forEach((flow, idx) => {
+        const originalIdx = flows.indexOf(flow);
+        const item = document.createElement('div');
+        item.className = 'flow-item';
+        if (selectedFlowIndex === originalIdx) item.classList.add('active');
+        item.innerHTML = `
+          <div class="flow-item-name">${flow.name}</div>
+          <span class="flow-item-status status-${flow.status}">${flow.status.toUpperCase()}</span>
+        `;
+        item.addEventListener('click', () => {
+          selectedFlowIndex = originalIdx;
+          renderFlowList();
+          renderDetail(flow);
+        });
+        flowList.appendChild(item);
+      });
+    }
+
+    function renderDetail(flow) {
+      const confidenceClass =
+        flow.confidence >= 0.85 ? 'badge-confidence-high' :
+        flow.confidence >= 0.6 ? 'badge-confidence-mid' :
+        'badge-confidence-low';
+      
+      const deltaClass = flow.deltaClassification ? `badge-delta-${flow.deltaClassification}` : '';
+
+      const stepsHtml = flow.steps.map((step, i) => `
+        <li class="step">
+          <span class="step-number">${i + 1}.</span>
+          <strong>${step.action}</strong> — ${step.target}
+          <br><small style="color: #666;">Expected: ${step.expectedOutcome}</small>
+        </li>
+      `).join('');
+
+      detailPanel.innerHTML = `
+        <div class="detail-content">
+          <div class="detail-header">
+            <div class="detail-name">${flow.name}</div>
+            <div class="detail-badges">
+              <span class="badge badge-category">${flow.category}</span>
+              <span class="badge badge-actor">${flow.actor}</span>
+              <span class="badge ${confidenceClass}">Confidence: ${(flow.confidence * 100).toFixed(0)}%</span>
+              ${flow.deltaClassification ? `<span class="badge ${deltaClass}">${flow.deltaClassification.toUpperCase()}</span>` : ''}
+            </div>
+          </div>
+          <div class="detail-description">${flow.description}</div>
+          
+          <div class="detail-section">
+            <div class="detail-section-title">Steps</div>
+            <ul class="steps-list">${stepsHtml}</ul>
+          </div>
+
+          <div class="detail-section">
+            <div class="detail-endpoints">
+              <div class="endpoint">
+                <div class="endpoint-label">ENTRY POINT</div>
+                <div class="endpoint-value">${flow.entryPoint}</div>
+              </div>
+              <div class="endpoint">
+                <div class="endpoint-label">EXIT POINT</div>
+                <div class="endpoint-value">${flow.exitPoint}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-actions">
+            <button class="btn btn-approve" onclick="updateFlowStatus(${selectedFlowIndex}, 'approved')">Approve</button>
+            <button class="btn btn-reject" onclick="updateFlowStatus(${selectedFlowIndex}, 'rejected')">Reject</button>
+            <button class="btn btn-pending" onclick="updateFlowStatus(${selectedFlowIndex}, 'pending')">Pending</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function updateFlowStatus(idx, status) {
+      flows[idx].status = status;
+      renderFlowList();
+      if (selectedFlowIndex === idx) {
+        renderDetail(flows[idx]);
+      }
+      updateStats();
+    }
+
+    function updateStats() {
+      document.getElementById('stat-total').textContent = flows.length;
+      document.getElementById('stat-approved').textContent = flows.filter((f) => f.status === 'approved').length;
+      document.getElementById('stat-rejected').textContent = flows.filter((f) => f.status === 'rejected').length;
+      document.getElementById('stat-pending').textContent = flows.filter((f) => f.status === 'pending').length;
+    }
+
+    function exportApprovedFlows() {
+      const approved = flows.filter((f) => f.status === 'approved');
+      const dataStr = JSON.stringify(approved, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'approved-flows.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    window.updateFlowStatus = updateFlowStatus;
+  </script>
+</body>
+</html>

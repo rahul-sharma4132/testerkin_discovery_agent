@@ -1,0 +1,29 @@
+{
+  "name": "testerkin-discovery",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "discover": "node --loader ts-node/esm src/index.ts",
+    "infer:only": "SKIP_CRAWL=true node --loader ts-node/esm src/index.ts",
+    "db:migrate": "node --loader ts-node/esm src/db/migrate.ts",
+    "db:seed:skills": "node --loader ts-node/esm src/db/seed-skills.ts",
+    "discover:todomvc": "TARGET_URL=https://demo.playwright.dev/todomvc/ npm run discover",
+    "discover:saucedemo": "TARGET_URL=https://www.saucedemo.com SKILL_FILE=skills/apps/ecommerce.md APP_CONTEXT='Ecommerce demo app with login, product browsing, and cart checkout' npm run discover",
+    "discover:demoqa": "TARGET_URL=https://demoqa.com SKILL_FILE=skills/apps/form-practice.md APP_CONTEXT='UI component demo site with forms, widgets, and interactions' npm run discover",
+    "discover:theinternet": "TARGET_URL=https://the-internet.herokuapp.com APP_CONTEXT='Automation practice site with isolated UI interaction examples' npm run discover"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.36.0",
+    "@google/generative-ai": "^0.24.1",
+    "dotenv": "^16.0.0",
+    "pg": "^8.11.0",
+    "pgvector": "^0.2.0",
+    "playwright": "^1.45.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/pg": "^8.11.0",
+    "ts-node": "^10.9.0",
+    "typescript": "^5.4.0"
+  }
+}

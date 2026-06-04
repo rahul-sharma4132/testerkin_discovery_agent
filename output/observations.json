@@ -1,0 +1,32 @@
+[
+  {
+    "url": "https://demo.playwright.dev/todomvc/",
+    "title": "React • TodoMVC",
+    "headings": [
+      "todos"
+    ],
+    "elements": [
+      {
+        "type": "input",
+        "placeholder": "What needs to be done?",
+        "inputType": "text"
+      },
+      {
+        "type": "link",
+        "text": "real TodoMVC app.",
+        "href": "https://todomvc.com/"
+      },
+      {
+        "type": "link",
+        "text": "Remo H. Jansen",
+        "href": "http://github.com/remojansen/"
+      },
+      {
+        "type": "link",
+        "text": "TodoMVC",
+        "href": "http://todomvc.com/"
+      }
+    ],
+    "observedAt": "2026-06-04T10:13:09.112Z"
+  }
+]

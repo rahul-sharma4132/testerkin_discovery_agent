@@ -1,0 +1,106 @@
+[
+  {
+    "name": "Create Todo Item",
+    "description": "User creates a new todo item by entering text and submitting.",
+    "category": "data-entry",
+    "actor": "User",
+    "entryPoint": "https://demo.playwright.dev/todomvc/",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "navigate",
+        "target": "https://demo.playwright.dev/todomvc/",
+        "expectedOutcome": "Todo application homepage loads with empty todo list"
+      },
+      {
+        "stepNumber": 2,
+        "action": "click",
+        "target": "input[placeholder='What needs to be done?']",
+        "expectedOutcome": "Input field receives focus"
+      },
+      {
+        "stepNumber": 3,
+        "action": "type",
+        "target": "input[placeholder='What needs to be done?']",
+        "expectedOutcome": "Text appears in input field"
+      },
+      {
+        "stepNumber": 4,
+        "action": "press",
+        "target": "Enter key",
+        "expectedOutcome": "New todo item is added to the list and input field clears"
+      }
+    ],
+    "exitPoint": "https://demo.playwright.dev/todomvc/ with new todo item visible in list",
+    "confidence": 0.75
+  },
+  {
+    "name": "View TodoMVC Reference",
+    "description": "User navigates to the official TodoMVC website to view the reference application.",
+    "category": "navigation",
+    "actor": "User",
+    "entryPoint": "https://demo.playwright.dev/todomvc/",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "navigate",
+        "target": "https://demo.playwright.dev/todomvc/",
+        "expectedOutcome": "Todo application homepage loads"
+      },
+      {
+        "stepNumber": 2,
+        "action": "click",
+        "target": "link[text='real TodoMVC app.']",
+        "expectedOutcome": "User is redirected to https://todomvc.com/"
+      }
+    ],
+    "exitPoint": "https://todomvc.com/",
+    "confidence": 0.9
+  },
+  {
+    "name": "View Author Profile",
+    "description": "User navigates to the GitHub profile of the application author.",
+    "category": "navigation",
+    "actor": "User",
+    "entryPoint": "https://demo.playwright.dev/todomvc/",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "navigate",
+        "target": "https://demo.playwright.dev/todomvc/",
+        "expectedOutcome": "Todo application homepage loads"
+      },
+      {
+        "stepNumber": 2,
+        "action": "click",
+        "target": "link[text='Remo H. Jansen']",
+        "expectedOutcome": "User is redirected to http://github.com/remojansen/"
+      }
+    ],
+    "exitPoint": "http://github.com/remojansen/",
+    "confidence": 0.9
+  },
+  {
+    "name": "View TodoMVC Project",
+    "description": "User navigates to the TodoMVC project homepage to learn more about the framework.",
+    "category": "navigation",
+    "actor": "User",
+    "entryPoint": "https://demo.playwright.dev/todomvc/",
+    "steps": [
+      {
+        "stepNumber": 1,
+        "action": "navigate",
+        "target": "https://demo.playwright.dev/todomvc/",
+        "expectedOutcome": "Todo application homepage loads"
+      },
+      {
+        "stepNumber": 2,
+        "action": "click",
+        "target": "link[text='TodoMVC']",
+        "expectedOutcome": "User is redirected to http://todomvc.com/"
+      }
+    ],
+    "exitPoint": "http://todomvc.com/",
+    "confidence": 0.9
+  }
+]

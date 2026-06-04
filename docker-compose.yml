@@ -1,0 +1,17 @@
+# docker-compose.yml
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: testerkin-postgres
+    environment:
+      POSTGRES_USER: testerkin
+      POSTGRES_PASSWORD: testerkin_secret
+      POSTGRES_DB: testerkin_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d
+
+volumes:
+  pgdata:
